@@ -60,8 +60,9 @@ int main()
   
   dijkstra(3);
   
-  for(int i = 0; i < V; ++i)
+  /*for(int i = 0; i < V; ++i)
   {
     cout << i << ": " << dist[i] << endl;
-  } 
+  }*/
+   
 }
