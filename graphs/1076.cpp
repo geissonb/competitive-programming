@@ -2,65 +2,78 @@
 
 using namespace std;
 
-vector<list<int>> graph;
-vector<bool> verify;
-int V,E;
+typedef pair < int, int > pi;
+vector < list < pi > > graph;
+map < pi, int > edge;
+vector < bool > visited;
+int V, E;
 
 int dfs(int source)
 {
-  int k = 0;
-  stack<int> s;
+	stack < int > s;
+	list < pi > :: iterator it;
+	int ans = 0;
 
-  s.push(source);
-  verify[source] = true;
+	visited[source] = true;
+	s.push(source);
 
-  while(!s.empty())
-  {
-    int v = s.top();
-    s.pop();
-    if (v != source)
-      k++;
+	while(!s.empty())
+	{
+		int u = s.top();
+		s.pop();
 
-    list<int> :: iterator it;
+		for( it = graph[u].begin(); it != graph[u].end(); it++)
+		{
+			ans += it->second;
+			
+			if(visited[it->first] == true )
+				continue;
+			else
+			{
+				visited[it->first] = true;
+				s.push(it->first);
+			}
+		}
+	}
 
-    for(it = graph[v].begin(); it != graph[v].end(); ++it)
-    {
-      if(verify[*it] == false)
-      {
-        verify[*it] = true;
-        s.push(*it);
-        k++;
-      }
-    }
-  }
+	return ans;
 
-  verify.clear();
-  graph.clear();
-
-  return k;
 }
+
 
 int main ()
 {
-  int N,s;
-  cin >> N;
-  for(int j = 0; j < N; ++j)
-  {
-    cin >> s;
-    cin >> V >> E;
+	int N, s;
+	
+	cin >> N;
 
-    verify.resize(V,false);
-    graph.resize(V);
+	for( int j = 0; j < N; ++j)
+	{
+		cin >> s >> V >> E;
 
-    for(int i = 0; i < E; ++i)
-    {
-      int from, to;
-      cin >> from >> to;
-      graph[from].push_back(to);
-      graph[to].push_back(from);
-    }
+		graph.resize(V);
+		visited.resize(V, false);
+		
+		for(int i = 0; i < E; ++i)
+		{
+			int from, to;
+			cin >> from >> to;
 
-    //int ans = dfs(s);
-    cout << dfs(s) << endl;
-  }
+			if(edge[make_pair(from,to)] == 1)
+				continue;
+			else
+			{
+				graph[from].push_back(make_pair(to, 1));
+				graph[to].push_back(make_pair(from, 1));
+				edge[make_pair(from,to)] = 1;
+				edge[make_pair(to,from)] = 1;
+			}
+		}
+		
+		cout << dfs(s) << endl;
+		
+		graph.clear();
+		visited.clear();
+		edge.clear();	
+	}
 }
